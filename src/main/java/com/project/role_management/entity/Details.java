@@ -1,20 +1,28 @@
 package com.project.role_management.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 import java.util.UUID;
 
+@Data
 @Entity
 @Table(name = "personal_details")
-public class PersonalDetails {
+public class Details {
 
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Min(1) @Max(100)
+    @Column(name = "age", nullable = false)
+    private Integer age;
 
     @Column(name = "name", nullable = false)
     private String name;

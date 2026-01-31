@@ -2,9 +2,12 @@ package com.project.role_management.controllers;
 
 import com.project.role_management.contants.SuccessConstants;
 import com.project.role_management.dto.AddDetailsDto;
+import com.project.role_management.dto.responses.DetailsProjection;
 import com.project.role_management.entity.Details;
 import com.project.role_management.services.DetailsService;
-import com.project.role_management.utils.response.ApiResponse;
+import com.project.role_management.utils.filters.Filter;
+import com.project.role_management.utils.response.PagedResponse;
+import com.project.role_management.utils.response.ResponseUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +27,15 @@ public class DetailsController {
     @PostMapping("/add")
     public ResponseEntity<?> addPersonalDetails(@Valid @RequestBody AddDetailsDto detailsData){
         Details details = detailsService.addDetails(detailsData);
-        return ResponseEntity.status(HttpStatus.CREATED).body(
-                ApiResponse.builder()
-                        .message(SuccessConstants.DETAILS_ADDED)
-                        .success(true)
-                        .data(details)
-                        .build()
-        );
+        return ResponseUtils.prepareResponse(HttpStatus.CREATED, SuccessConstants.DETAILS_ADDED, details);
+    }
+
+    @GetMapping("/get/all")
+    public ResponseEntity<?> getDepartments(
+            @RequestParam(required = false) String filter
+    ) {
+        Filter filterObj =  Filter.encodeFilter(filter);
+        PagedResponse<DetailsProjection> details = detailsService.getAllDetails(filterObj);
+        return ResponseUtils.prepareSuccessGetResponse(SuccessConstants.DETAILS_FETCHED, details);
     }
 }

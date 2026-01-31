@@ -12,7 +12,9 @@ public enum ApplicationErrorCode implements ErrorCode {
     DEPARTMENT_NAME_EMPTY("INVALID REQUEST", "Department name can not be empty or blank", 400, "department_400_1"),
     DEPARTMENT_ALREADY_EXISTS("INVALID REQUEST", "Department already exists with this name", 400, "department_400_2"),
     ROLES_NOT_FOUND("INVALID REQUEST", "Roles not found", 404 , "role_404_1" ),
-    DEPARTMENT_NOT_FOUND("INVALID REQUEST", "Department not found", 404 , "department_404_1" ),
+    DEPARTMENT_NOT_FOUND("INVALID REQUEST", "Department not found", 404 , "department_404_1" ), 
+    DETAILS_NOT_FOUND("INVALID REQUEST", "Details not found", 404 , "details_404_1" ),
+    INVALID_FILTER("INVALID REQUEST", "Invalid Data Provided",400 , "req_400_1" ),
 
     ;
 

@@ -7,6 +7,10 @@ import com.project.role_management.repository.RolesRepo;
 import com.project.role_management.services.RolesService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -32,8 +36,26 @@ public class RolesServiceImpl implements RolesService {
         role.setName(roleName.trim());
         Roles savedRole = rolesRepo.save(role);
 
-        log.info("RolesServiceImpl, addRole() method finished for adding role : {}", role);
+        log.info("RolesServiceImpl, addRole() method finished for adding role : {}", role.getName());
         return savedRole;
+    }
+
+    @Override
+    public Roles getRoleById(UUID id) {
+        log.info("RolesServiceImpl, getRoleById() method started for : {}", id);
+        Roles roles = rolesRepo.findByIdAndIsDeletedFalse(id)
+                .orElseThrow(() -> new ApplicationException(ApplicationErrorCode.ROLES_NOT_FOUND));
+
+        log.info("RolesServiceImpl, getRoleById() method finished for : {}", id);
+        return roles;
+    }
+
+    @Override
+    public List<Roles> getAllRoles(){
+        log.info("RolesServiceImpl, getAllRoles() method started");
+        List<Roles> rolesList = rolesRepo.findAllByIsDeletedFalse();
+        log.info("RolesServiceImpl, getAllRoles() method finished");
+        return rolesList;
     }
 
 }

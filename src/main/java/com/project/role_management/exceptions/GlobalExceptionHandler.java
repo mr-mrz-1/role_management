@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.net.URI;
@@ -18,6 +19,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    // Handle method argument validation errors
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
@@ -42,6 +44,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problem.setProperty("errors", validationErrors);
 
         return ResponseEntity.status(status).body(problem);
+    }
+
+    // Handle Invalid UUID format (e.g. sending "abc" instead of UUID)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ProblemDetail handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest request) {
+
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                "Invalid value provided for parameter: " + ex.getName()
+        );
+
+        // We are not logging here, since it is an invalid input request parameter.
+
+        problem.setTitle("Invalid Parameter Format");
+        problem.setType(URI.create("about:blank"));
+        problem.setInstance(URI.create(request.getRequestURI()));
+        String simpleName = ex.getRequiredType() == null ? ex.getName() : ex.getRequiredType().getSimpleName();
+        problem.setProperty("error", "Value '" + ex.getValue() + "' is not a valid " + simpleName);
+
+        return problem;
     }
 
     // Handle ApplicationException (CustomException)
@@ -74,6 +96,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problem;
     }
 
+    // all uncaught exception
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleGlobalException(Exception ex) {
 

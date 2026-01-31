@@ -21,53 +21,52 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void getAddressByCoordinate(Coordinates coordinate) {
+    public String getAddressByCoordinate(Coordinates coordinate) {
         log.info("LocationServiceImpl, getAddressByCoordinate() Method started");
 
-        // FIX 1: Change <String, String> to <String, Object> to handle nested objects/numbers
-        Map<String, Object> objects = geoLocationService.getAddressFromCoordinates(coordinate.getLatitude(), coordinate.getLongitude());
+        Map<String, Object> objects = geoLocationService.getAddressFromCoordinates(
+                coordinate.getLatitude(), coordinate.getLongitude());
 
-        // Debug: Print the raw map to ensure data exists
-        System.out.println("Raw Response: " + objects);
+//        System.out.println("Raw Response: " + objects);
 
         if (objects == null) {
-            System.out.println("readable: Address not available (Null Response)");
-            return;
+//            System.out.println("readable: Address not available (Null Response)");
+            return "Address not available";
         }
 
         // 1. EXTRACT the nested 'address' map safely
         Object addressObj = objects.get("address");
 
         if (addressObj instanceof Map) {
-            // FIX 2: Safely cast to Map<String, Object> first, then handle values
             // We suppress warnings because we know the structure from the log
             @SuppressWarnings("unchecked")
             Map<String, Object> rawAddressMap = (Map<String, Object>) addressObj;
 
             // 2. Pass to the builder
-            System.out.println("readable: " + buildFormattedAddress(rawAddressMap));
-            return;
+//            System.out.println("readable: " + buildFormattedAddress(rawAddressMap));
+            return buildFormattedAddress(rawAddressMap);
         }
 
         // Fallback: Use 'display_name' if address object is missing
         if (objects.containsKey("display_name")) {
             String response = (String) objects.get("display_name");
             System.out.println("readable (fallback): " + response);
-            return;
+            return response;
         }
 
-        System.out.println("readable: Address not available");
+        return "Address not available";
     }
 
     public static String buildFormattedAddress(Map<String, Object> addressMap) {
         if (addressMap == null || addressMap.isEmpty()) {
-            return "no address found";
+            return "No address found";
+            // we can also say service is down this time.
         }
 
         List<String> parts = new ArrayList<>();
 
         // 1. Street / Building
-        String street = getFirstNonNull(addressMap, "road", "pedestrian", "highway");
+        String street = getFirstAvailableAddresses(addressMap, "road", "pedestrian", "highway");
         String houseNumber = getString(addressMap, "house_number");
 
         if (houseNumber != null && street != null) {
@@ -77,21 +76,21 @@ public class LocationServiceImpl implements LocationService {
         }
 
         // 2. Locality
-        String locality = getFirstNonNull(addressMap, "suburb", "neighbourhood", "residential");
-        addIfNew(parts, locality);
+        String locality = getFirstAvailableAddresses(addressMap, "suburb", "neighbourhood", "residential");
+        addInListIfNewNameOnly(parts, locality);
 
         // 3. City Level
-        String cityPart = getFirstNonNull(addressMap, "city", "town", "village", "hamlet");
-        addIfNew(parts, cityPart);
+        String cityPart = getFirstAvailableAddresses(addressMap, "city", "town", "village", "hamlet");
+        addInListIfNewNameOnly(parts, cityPart);
 
         // 4. District
-        String district = getFirstNonNull(addressMap, "state_district", "county");
-        addIfNew(parts, district);
+        String district = getFirstAvailableAddresses(addressMap, "state_district", "county");
+        addInListIfNewNameOnly(parts, district);
 
         // 5. State & Country
-        addIfNew(parts, getString(addressMap, "state"));
-        addIfNew(parts, getString(addressMap, "postcode")); // Safer: handles if postcode is Int or String
-        addIfNew(parts, getString(addressMap, "country"));
+        addInListIfNewNameOnly(parts, getString(addressMap, "state"));
+        addInListIfNewNameOnly(parts, getString(addressMap, "postcode"));
+        addInListIfNewNameOnly(parts, getString(addressMap, "country"));
 
         return String.join(", ", parts);
     }
@@ -103,7 +102,7 @@ public class LocationServiceImpl implements LocationService {
     }
 
     // Helper: Checks multiple keys
-    private static String getFirstNonNull(Map<String, Object> map, String... keys) {
+    private static String getFirstAvailableAddresses(Map<String, Object> map, String... keys) {
         for (String key : keys) {
             String val = getString(map, key);
             if (val != null && !val.trim().isEmpty()) {
@@ -113,7 +112,7 @@ public class LocationServiceImpl implements LocationService {
         return null;
     }
 
-    private static void addIfNew(List<String> parts, String value) {
+    private static void addInListIfNewNameOnly(List<String> parts, String value) {
         if (value != null && !value.trim().isEmpty() && !parts.contains(value)) {
             parts.add(value);
         }

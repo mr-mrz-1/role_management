@@ -9,6 +9,7 @@ import com.project.role_management.utils.filters.Filter;
 import com.project.role_management.utils.response.PagedResponse;
 import com.project.role_management.utils.response.ResponseUtils;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin("*")
 @RequestMapping("/api/v1/details")
+@RequiredArgsConstructor
 public class DetailsController {
 
     private final DetailsService detailsService;
-
-    public DetailsController(DetailsService detailsService) {
-        this.detailsService = detailsService;
-    }
 
     @PostMapping("/add")
     public ResponseEntity<?> addPersonalDetails(@Valid @RequestBody AddDetailsDto detailsData){

@@ -16,7 +16,7 @@ public enum ApplicationErrorCode implements ErrorCode {
     DETAILS_NOT_FOUND("INVALID REQUEST", "Details not found", 404 , "details_404_1" ),
     INVALID_FILTER("INVALID REQUEST", "Invalid Data Provided",400 , "req_400_1" ),
 
-    ;
+    UNABLE_TO_LOCATE("SERVICE ERROR", "Unable To Locate", 500 , "service_500_1" ),;
 
     private final String title;
     private final String message;

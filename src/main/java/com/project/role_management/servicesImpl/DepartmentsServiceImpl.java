@@ -5,6 +5,7 @@ import com.project.role_management.exceptions.ApplicationErrorCode;
 import com.project.role_management.exceptions.ApplicationException;
 import com.project.role_management.repository.DepartmentsRepo;
 import com.project.role_management.services.DepartmentsService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +14,10 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class DepartmentsServiceImpl implements DepartmentsService {
 
     private final DepartmentsRepo departmentsRepo;
-
-    public DepartmentsServiceImpl(DepartmentsRepo departmentsRepo) {
-        this.departmentsRepo = departmentsRepo;
-    }
 
     @Override
     public Departments addDepartment(String departmentName) {

@@ -6,7 +6,7 @@ import com.project.role_management.dto.responses.DetailsProjection;
 import com.project.role_management.entity.Details;
 import com.project.role_management.services.DetailsService;
 import com.project.role_management.utils.filters.Filter;
-import com.project.role_management.utils.response.PagedResponse;
+import com.project.role_management.dto.responses.PagedResponse;
 import com.project.role_management.utils.response.ResponseUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -34,15 +34,13 @@ public class LocationServiceImpl implements LocationService {
             return "Address not available";
         }
 
-        // 1. EXTRACT the nested 'address' map safely
         Object addressObj = objects.get("address");
 
         if (addressObj instanceof Map) {
-            // We suppress warnings because we know the structure from the log
+            // Suppress warning of convertion.
             @SuppressWarnings("unchecked")
             Map<String, Object> rawAddressMap = (Map<String, Object>) addressObj;
 
-            // 2. Pass to the builder
 //            System.out.println("readable: " + buildFormattedAddress(rawAddressMap));
             return buildFormattedAddress(rawAddressMap);
         }
@@ -50,7 +48,7 @@ public class LocationServiceImpl implements LocationService {
         // Fallback: Use 'display_name' if address object is missing
         if (objects.containsKey("display_name")) {
             String response = (String) objects.get("display_name");
-            System.out.println("readable (fallback): " + response);
+//            System.out.println("readable (fallback): " + response);
             return response;
         }
 
@@ -95,13 +93,13 @@ public class LocationServiceImpl implements LocationService {
         return String.join(", ", parts);
     }
 
-    // Helper: Safely gets a String from the map, even if the value is an Integer
+    // Safely gets a String from the map, even if the value is an Integer
     private static String getString(Map<String, Object> map, String key) {
         Object val = map.get(key);
         return val != null ? String.valueOf(val) : null;
     }
 
-    // Helper: Checks multiple keys
+    // Checks multiple keys
     private static String getFirstAvailableAddresses(Map<String, Object> map, String... keys) {
         for (String key : keys) {
             String val = getString(map, key);

@@ -31,7 +31,7 @@ public class DepartmentsServiceImpl implements DepartmentsService {
         }
 
         Departments departments = new Departments();
-        departments.setName(departmentName);
+        departments.setName(departmentName.trim());
         Departments savedDepartment = departmentsRepo.save(departments);
         log.info("DepartmentServiceImpl, addDepartment() method finished for : {}", departmentName);
         return savedDepartment;

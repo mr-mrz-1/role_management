@@ -10,7 +10,7 @@ import com.project.role_management.repository.DetailsRepo;
 import com.project.role_management.repository.RolesRepo;
 import com.project.role_management.services.DetailsService;
 import com.project.role_management.utils.filters.Filter;
-import com.project.role_management.utils.response.PagedResponse;
+import com.project.role_management.dto.responses.PagedResponse;
 import com.project.role_management.utils.response.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,11 +42,11 @@ public class DetailsServiceImpl implements DetailsService {
 
         Details details = new Details();
 
-        details.setName(detailsData.getName());
+        details.setName(detailsData.getName().trim());
         details.setAge(detailsData.getAge());
         details.setMobileNumber(detailsData.getMobileNumber());
-        details.setAddress(detailsData.getAddress());
-        details.setCity(detailsData.getCity());
+        details.setAddress(detailsData.getAddress().trim());
+        details.setCity(detailsData.getCity().trim());
         details.setRoleId(detailsData.getRoleId());
         details.setDepartmentId(detailsData.getDepartmentId());
 

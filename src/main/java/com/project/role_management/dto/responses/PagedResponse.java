@@ -1,4 +1,4 @@
-package com.project.role_management.utils.response;
+package com.project.role_management.dto.responses;
 
 import lombok.Builder;
 import lombok.Data;

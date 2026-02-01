@@ -1,5 +1,6 @@
 package com.project.role_management.utils.response;
 
+import com.project.role_management.dto.responses.PagedResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
